@@ -1,0 +1,104 @@
+{
+  "name": "university-v1",
+  "notes": "Predictions are hand-written to stand in for the failure modes a text-to-SQL model actually produces: paraphrases that are semantically identical, near-misses that drop a predicate or a join condition, and the occasional non-query. The point of the suite is the gap between the two metrics, so the equivalent-but-reworded cases are deliberate, not padding.",
+  "cases": [
+    {
+      "id": "q01-identical",
+      "question": "How many students are there?",
+      "gold": "SELECT COUNT(*) FROM students",
+      "prediction": "SELECT COUNT(*) FROM students",
+      "expect": "correct"
+    },
+    {
+      "id": "q02-count-alias",
+      "question": "How many students have a GPA above 3.5?",
+      "gold": "SELECT COUNT(*) FROM students WHERE gpa > 3.5",
+      "prediction": "SELECT COUNT(1) AS n FROM students s WHERE s.gpa > 3.5",
+      "expect": "correct"
+    },
+    {
+      "id": "q03-join-order",
+      "question": "List the names of students in Computer Sciences.",
+      "gold": "SELECT s.name FROM students s JOIN departments d ON s.dept_id = d.id WHERE d.name = 'Computer Sciences'",
+      "prediction": "SELECT students.name FROM departments JOIN students ON departments.id = students.dept_id WHERE departments.name = 'Computer Sciences'",
+      "expect": "correct"
+    },
+    {
+      "id": "q04-in-vs-exists",
+      "question": "Which course titles has at least one student enrolled in?",
+      "gold": "SELECT title FROM courses WHERE id IN (SELECT course_id FROM enrollments)",
+      "prediction": "SELECT c.title FROM courses c WHERE EXISTS (SELECT 1 FROM enrollments e WHERE e.course_id = c.id)",
+      "expect": "correct"
+    },
+    {
+      "id": "q05-between",
+      "question": "Which students are in years 2 through 3?",
+      "gold": "SELECT name FROM students WHERE year >= 2 AND year <= 3",
+      "prediction": "SELECT name FROM students WHERE year BETWEEN 2 AND 3",
+      "expect": "correct"
+    },
+    {
+      "id": "q06-comma-join",
+      "question": "List each instructor with their department name.",
+      "gold": "SELECT i.name, d.name FROM instructors i JOIN departments d ON i.dept_id = d.id",
+      "prediction": "SELECT i.name, d.name FROM instructors i, departments d WHERE i.dept_id = d.id",
+      "expect": "correct"
+    },
+    {
+      "id": "q07-predicate-order",
+      "question": "Which Computer Sciences students are in year 1 or later with a GPA above 3?",
+      "gold": "SELECT name FROM students WHERE dept_id = 1 AND gpa > 3.0",
+      "prediction": "SELECT name FROM students WHERE gpa > 3.0 AND dept_id = 1",
+      "expect": "correct"
+    },
+    {
+      "id": "q08-missing-filter",
+      "question": "How many students have a GPA above 3.5?",
+      "gold": "SELECT COUNT(*) FROM students WHERE gpa > 3.5",
+      "prediction": "SELECT COUNT(*) FROM students",
+      "expect": "wrong_values"
+    },
+    {
+      "id": "q09-wrong-aggregate",
+      "question": "What is the average instructor salary per department?",
+      "gold": "SELECT dept_id, AVG(salary) FROM instructors GROUP BY dept_id",
+      "prediction": "SELECT dept_id, SUM(salary) FROM instructors GROUP BY dept_id",
+      "expect": "wrong_values"
+    },
+    {
+      "id": "q10-missing-order",
+      "question": "List students by GPA, highest first.",
+      "gold": "SELECT name, gpa FROM students WHERE gpa IS NOT NULL ORDER BY gpa DESC",
+      "prediction": "SELECT name, gpa FROM students WHERE gpa IS NOT NULL",
+      "expect": "wrong_order"
+    },
+    {
+      "id": "q11-extra-column",
+      "question": "List the titles of Computer Sciences courses.",
+      "gold": "SELECT title FROM courses WHERE dept_id = 1",
+      "prediction": "SELECT title, credits FROM courses WHERE dept_id = 1",
+      "expect": "wrong_column_count"
+    },
+    {
+      "id": "q12-missing-join-condition",
+      "question": "List each student with their department name.",
+      "gold": "SELECT s.name, d.name FROM students s JOIN departments d ON s.dept_id = d.id",
+      "prediction": "SELECT s.name, d.name FROM students s, departments d",
+      "expect": "extra_rows"
+    },
+    {
+      "id": "q13-syntax-error",
+      "question": "How many courses are worth four credits?",
+      "gold": "SELECT COUNT(*) FROM courses WHERE credits = 4",
+      "prediction": "SELECT COUNT(*) FROM courses WHERE credits = ",
+      "expect": "syntax_error"
+    },
+    {
+      "id": "q14-unsafe",
+      "question": "How many enrollments are there?",
+      "gold": "SELECT COUNT(*) FROM enrollments",
+      "prediction": "DROP TABLE enrollments",
+      "expect": "blocked_unsafe"
+    }
+  ]
+}

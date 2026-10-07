@@ -1,0 +1,15 @@
+{
+  "name": "rowmatch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Execution-based evaluation for text-to-SQL: run the prediction and the gold query, compare result sets, and measure how much string-matching gets wrong.",
+  "type": "module",
+  "engines": { "node": ">=22.5.0" },
+  "bin": { "rowmatch": "bin/rowmatch.js" },
+  "scripts": {
+    "test": "node --test",
+    "bench": "node bin/rowmatch.js",
+    "bench:json": "node bin/rowmatch.js --json"
+  },
+  "license": "MIT"
+}
