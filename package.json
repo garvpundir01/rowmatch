@@ -2,14 +2,24 @@
   "name": "rowmatch",
   "version": "1.0.0",
   "private": true,
-  "description": "Execution-based evaluation for text-to-SQL: run the prediction and the gold query, compare result sets, and measure how much string-matching gets wrong.",
+  "description": "A text-to-SQL agent with schema linking and execution-feedback self-correction, plus the execution-based harness that measures it.",
   "type": "module",
-  "engines": { "node": ">=22.5.0" },
-  "bin": { "rowmatch": "bin/rowmatch.js" },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "bin": {
+    "rowmatch": "bin/rowmatch.js",
+    "rowmatch-agent": "bin/agent.js"
+  },
   "scripts": {
     "test": "node --test",
     "bench": "node bin/rowmatch.js",
-    "bench:json": "node bin/rowmatch.js --json"
+    "bench:json": "node bin/rowmatch.js --json",
+    "agent": "node bin/agent.js --provider mock",
+    "agent:ablate": "node bin/agent.js --provider mock --ablate"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.70.0"
+  }
 }

@@ -1,6 +1,8 @@
 node_modules/
 *.log
 .env
+.env.*
+predictions.json
 .DS_Store
 Thumbs.db
 .vscode/

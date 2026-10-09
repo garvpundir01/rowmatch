@@ -1,0 +1,22 @@
+{
+  "_note": "Scripted replies for the mock provider, so the agent loop can be demonstrated with no model, no key and no network. Two entries return a broken first answer and a fixed second one, which is what makes the --ablate run show a non-zero recovery. These are canned responses, NOT model output: a real accuracy number needs --provider anthropic or --provider ollama.",
+  "students are there": ["SELECT COUNT(*) FROM students"],
+  "GPA above 3.5": ["SELECT COUNT(1) AS n FROM students s WHERE s.gpa > 3.5"],
+  "names of students in Computer Sciences": ["SELECT students.name FROM departments JOIN students ON departments.id = students.dept_id WHERE departments.name = 'Computer Sciences'"],
+  "at least one student enrolled": ["SELECT c.title FROM courses c WHERE EXISTS (SELECT 1 FROM enrollments e WHERE e.course_id = c.id)"],
+  "years 2 through 3": ["SELECT name FROM students WHERE year BETWEEN 2 AND 3"],
+  "each instructor with their department": ["SELECT i.name, d.name FROM instructors i, departments d WHERE i.dept_id = d.id"],
+  "year 1 or later": ["SELECT name FROM students WHERE gpa > 3.0 AND dept_id = 1"],
+  "average instructor salary": ["SELECT dept_id, AVG(salary) FROM instructors GROUP BY dept_id"],
+  "by GPA, highest first": ["SELECT name, gpa FROM students WHERE gpa IS NOT NULL ORDER BY gpa DESC"],
+  "titles of Computer Sciences courses": ["SELECT title FROM courses WHERE dept_id = 1"],
+  "each student with their department": ["SELECT s.name, d.name FROM students s JOIN departments d ON s.dept_id = d.id"],
+  "four credits": [
+    "SELECT COUNT(*) FROM courses WHERE credits = ",
+    "SELECT COUNT(*) FROM courses WHERE credits = 4"
+  ],
+  "enrollments are there": [
+    "DROP TABLE enrollments",
+    "SELECT COUNT(*) FROM enrollments"
+  ]
+}
